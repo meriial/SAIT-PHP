@@ -3,7 +3,7 @@
 <?php echo formatErrors($errors) ?>
 
 <form method="POST">
-  <input type="text" name="tweet" />
+  <input type="text" name="tweet" value="<?php echo repopulate('tweet') ?>" />
   <input type="submit" name="submit" value="Submit" />
 </form>
 
