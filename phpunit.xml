@@ -14,6 +14,7 @@
         <testsuite name="Unit Tests">
             <directory>./basics</directory>
             <directory>./forms</directory>
+            <directory>./files</directory>
         </testsuite>
     </testsuites>
 </phpunit>
