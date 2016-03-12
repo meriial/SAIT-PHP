@@ -1,0 +1,8 @@
+{
+    "require": {
+        "phpunit/phpunit": "^5.2",
+        "aik099/phpunit-mink": "~2.0",
+        "behat/mink-goutte-driver": "^1.2",
+        "fzaninotto/faker": "^1.5"
+    }
+}

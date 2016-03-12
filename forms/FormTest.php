@@ -1,0 +1,121 @@
+<?php
+
+class FormTest extends TestCase
+{
+
+    /**
+     * @test
+     */
+    public function registration_should_have_3_inputs()
+    {
+        $this->visit('forms/registration.php');
+
+        $webAssert = $this->getAssertSession();
+        $webAssert->elementsCount('css', 'input', 3);
+    }
+
+    /**
+     * @test
+     */
+    public function login_should_have_2_inputs()
+    {
+        $this->visit('forms/login.php');
+
+        $webAssert = $this->getAssertSession();
+        $webAssert->elementsCount('css', 'input', 2);
+    }
+
+    /**
+     * @test
+     */
+    public function login_should_validate_input()
+    {
+        // the expected correct login should be
+        // u: bob
+        // p: pass
+
+        // wrong password
+        $webAssert = $this->getAssertSession();
+        $email = $this->faker->email;
+        $password = $this->faker->password;
+
+        $this->visit('forms/login.php');
+
+        $this->fillField('email', 'correct@email.com');
+        $this->fillField('password', $password);
+        $this->pressButton('Submit');
+
+        $this->assertEquals('correct@email.com', $this->findField('email')->getValue());
+        $this->assertEquals($password, $this->findField('password')->getValue());
+
+        $webAssert->pageTextContains('ERROR! Incorrect password.');
+        $webAssert->pageTextNotContains('ERROR! Incorrect email.');
+
+        // wrong email
+
+        $this->visit('forms/login.php');
+        $webAssert->pageTextNotContains('ERROR!');
+
+        $this->fillField('email', $email);
+        $this->fillField('password', 'correct-password');
+        $this->pressButton('Submit');
+
+        $this->assertEquals($email, $this->findField('email')->getValue());
+        $this->assertEquals('correct-password', $this->findField('password')->getValue());
+        $webAssert->pageTextContains('ERROR! Incorrect email.');
+        $webAssert->pageTextNotContains('ERROR! Incorrect password.');
+
+        // correct credentials
+
+        $this->fillField('email', 'correct@email.com');
+        $this->fillField('password', 'correct-password');
+        $this->pressButton('Submit');
+
+        $webAssert->pageTextNotContains('ERROR!');
+        $webAssert->addressEquals('/forms/main.php');
+    }
+
+    /**
+     * @test
+     */
+    public function successful_registration_redirects_to_main_page()
+    {
+
+        $webAssert = $this->getAssertSession();
+
+        $this->visit('forms/registration.php');
+        $webAssert->pageTextNotContains('SUCCESS!');
+
+        $this->fillField('name', 'bob');
+        $this->fillField('email', 'bob');
+        $this->fillField('password', 'pass');
+        $this->pressButton('Submit');
+
+        $webAssert->pageTextNotContains('ERROR!');
+        $webAssert->addressEquals('/forms/login.php');
+
+    }
+
+    /**
+     * @test
+     */
+    public function main_page_echos_submitted_values()
+    {
+
+        $webAssert = $this->getAssertSession();
+        $name = $this->faker->name;
+
+        $this->visit('forms/main.php');
+
+        $this->fillField('item', $name);
+        $this->pressButton('Submit');
+
+        $webAssert->pageTextNotContains('ERROR!');
+        $webAssert->addressEquals('/forms/main.php');
+        $webAssert->pageTextContains($name);
+
+        $this->reload();
+        $webAssert->pageTextContains($name);
+
+    }
+}
