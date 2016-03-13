@@ -12,9 +12,7 @@
     syntaxCheck="false">
     <testsuites>
         <testsuite name="Unit Tests">
-            <directory>./basics</directory>
-            <directory>./forms</directory>
-            <directory>./files</directory>
+            <directory>./practice</directory>
         </testsuite>
     </testsuites>
 </phpunit>
