@@ -1,10 +1,10 @@
 <?php
 
-class ArrayDoublerTest extends PHPUnit_Framework_TestCase {
+class PrintTest extends PHPUnit_Framework_TestCase {
 
     public function setUp()
     {
-        require_once 'basic/arrays.php';
+        require_once PRACTICE_ROOT.'/basic/arrays.php';
     }
 
     /**

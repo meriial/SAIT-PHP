@@ -15,4 +15,9 @@
             <directory>./practice</directory>
         </testsuite>
     </testsuites>
+    <groups>
+        <exclude>
+            <group>tricky</group>
+        </exclude>
+    </groups>
 </phpunit>
