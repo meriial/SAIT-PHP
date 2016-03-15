@@ -8,7 +8,7 @@ class FormTest extends TestCase
      */
     public function registration_should_have_3_inputs()
     {
-        $this->visit('forms/registration.php');
+        $this->visit('assignment/forms/registration.php');
 
         $webAssert = $this->getAssertSession();
         $webAssert->elementsCount('css', 'input', 3);
@@ -19,7 +19,7 @@ class FormTest extends TestCase
      */
     public function login_should_have_2_inputs()
     {
-        $this->visit('forms/login.php');
+        $this->visit('assignment/forms/login.php');
 
         $webAssert = $this->getAssertSession();
         $webAssert->elementsCount('css', 'input', 2);
@@ -39,7 +39,7 @@ class FormTest extends TestCase
         $email = $this->faker->email;
         $password = $this->faker->password;
 
-        $this->visit('forms/login.php');
+        $this->visit('assignment/forms/login.php');
 
         $this->fillField('email', 'correct@email.com');
         $this->fillField('password', $password);
@@ -53,7 +53,7 @@ class FormTest extends TestCase
 
         // wrong email
 
-        $this->visit('forms/login.php');
+        $this->visit('assignment/forms/login.php');
         $webAssert->pageTextNotContains('ERROR!');
 
         $this->fillField('email', $email);
@@ -72,7 +72,7 @@ class FormTest extends TestCase
         $this->pressButton('Submit');
 
         $webAssert->pageTextNotContains('ERROR!');
-        $webAssert->addressEquals('/forms/main.php');
+        $webAssert->addressEquals('/assignment/forms/main.php');
     }
 
     /**
@@ -83,7 +83,7 @@ class FormTest extends TestCase
 
         $webAssert = $this->getAssertSession();
 
-        $this->visit('forms/registration.php');
+        $this->visit('assignment/forms/registration.php');
         $webAssert->pageTextNotContains('SUCCESS!');
 
         $this->fillField('name', 'bob');
@@ -92,7 +92,7 @@ class FormTest extends TestCase
         $this->pressButton('Submit');
 
         $webAssert->pageTextNotContains('ERROR!');
-        $webAssert->addressEquals('/forms/login.php');
+        $webAssert->addressEquals('/assignment/forms/login.php');
 
     }
 
@@ -105,13 +105,13 @@ class FormTest extends TestCase
         $webAssert = $this->getAssertSession();
         $name = $this->faker->name;
 
-        $this->visit('forms/main.php');
+        $this->visit('assignment/forms/main.php');
 
         $this->fillField('item', $name);
         $this->pressButton('Submit');
 
         $webAssert->pageTextNotContains('ERROR!');
-        $webAssert->addressEquals('/forms/main.php');
+        $webAssert->addressEquals('/assignment/forms/main.php');
         $webAssert->pageTextContains($name);
 
         $this->reload();

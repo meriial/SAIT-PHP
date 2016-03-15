@@ -7,6 +7,7 @@ class ArrayTest extends TestCase {
         parent::setUp();
 
         $this->requireOnce(PRACTICE_ROOT.'/basic/arrays.php');
+        $this->assertFunctionExists('arrayDoubler');
     }
 
     /**

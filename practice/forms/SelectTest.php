@@ -34,4 +34,27 @@ OPTIONS;
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @test
+     */
+    public function it_should_return_a_group_of_radio_buttons()
+    {
+
+        $arrayOfOptions = [
+            'AB' => 'Alberta',
+            'ON' => 'Ontario',
+            'MB' => 'Manitoba'
+        ];
+
+        $actual = generateRadioGroup($arrayOfOptions);
+
+        $expected = <<<"OPTIONS"
+<input type="radio" value="AB" name="province" /><label>Alberta</label>
+<input type="radio" value="ON" name="province" /><label>Ontario</label>
+<input type="radio" value="MB" name="province" /><label>Manitoba</label>
+OPTIONS;
+
+        $this->assertEquals($expected, $actual);
+    }
+
 }

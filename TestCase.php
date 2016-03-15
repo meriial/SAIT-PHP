@@ -77,4 +77,9 @@ class TestCase extends BrowserTestCase {
         $this->assertFalse($this->getSession()->getPage()->hasContent($text), $message);
     }
 
+    public function assertFunctionExists($functionName)
+    {
+        $this->assertTrue(function_exists($functionName), "There is no function $functionName. You need to write it.");
+    }
+
 }

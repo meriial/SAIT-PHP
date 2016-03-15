@@ -8,15 +8,16 @@ class LogTest extends TestCase
      */
     public function it_should_write_log_to_a_file()
     {
-        require_once ASSIGNMENT_ROOT.'/files/functions.php';
+        $this->requireOnce(ASSIGNMENT_ROOT.'/files/functions.php');
 
-        $this->assertTrue(function_exists('log_message'), 'There is no function log_message.');
+        $this->assertFunctionExists('log_message');
+        $this->assertFunctionExists('clear_log');
 
         $text = $this->faker->text;
         log_message($text);
 
         $log = file_get_contents(ASSIGNMENT_ROOT.'/files/log.txt');
-        // clear_log();
+        clear_log();
 
         $this->assertRegExp("/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d $text/", $log, 'The log entry did not match the desired pattern.');
 
@@ -33,7 +34,7 @@ class LogTest extends TestCase
         log_message($word1);
         log_message($word2);
 
-        $this->visit('files/log.php');
+        $this->visit('assignment/files/log.php');
 
         $tds = $this->getSession()->getPage()->findAll('css', 'td');
 

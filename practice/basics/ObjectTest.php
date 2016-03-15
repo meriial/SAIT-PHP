@@ -1,10 +1,10 @@
 <?php
 
-class ObjectTest extends PHPUnit_Framework_TestCase {
+class ObjectTest extends TestCase {
 
     public function setUp()
     {
-        require_once PRACTICE_ROOT.'/basic/objects.php';
+        $this->requireOnce(PRACTICE_ROOT.'/basic/objects.php');
     }
 
     /**
