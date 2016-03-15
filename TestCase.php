@@ -20,6 +20,15 @@ class TestCase extends BrowserTestCase {
         $this->faker = Faker\Factory::create();
     }
 
+    public function requireOnce($filepath)
+    {
+        if(file_exists($filepath)) {
+            require_once $filepath;
+        } else {
+            throw new Exception("Could not find file '$filepath'. This means you need to create it. Make sure that it exists at that location and that it (and its parent directories) are spelled correctly." );
+        }
+    }
+
     public function visit($url)
     {
         $this->getSession()->visit(HTTP_ROOT.'/'.$url);

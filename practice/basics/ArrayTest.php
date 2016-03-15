@@ -6,7 +6,7 @@ class ArrayTest extends TestCase {
     {
         parent::setUp();
 
-        require_once PRACTICE_ROOT.'/basic/arrays.php';
+        $this->requireOnce(PRACTICE_ROOT.'/basic/arrays.php');
     }
 
     /**
@@ -39,7 +39,7 @@ class ArrayTest extends TestCase {
 
     /**
      * @test
-     * 
+     *
      * Input is an associative array where
      * $key = [name]
      * $value = [address]
