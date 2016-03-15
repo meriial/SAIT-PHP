@@ -50,6 +50,21 @@ class ArrayTest extends TestCase {
      */
     public function it_should_handle_associative_arrays()
     {
+        $input = [
+            'Bob' => '123 Main Street',
+            'Jane' => '16 Philpot Avenue'
+        ];
+
+        $expected = [
+            "Bob lives at: 123 Main Street",
+            "Jane lives at: 16 Philpot Avenue"
+        ];
+
+        $actual = listAddresses($input);
+
+        $this->assertEquals($expected, $actual);
+
+
         $input = [];
         $expected = [];
         $count = 10;
