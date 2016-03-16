@@ -10,6 +10,7 @@ class FormPracticeTest extends TestCase {
         $this->visit('practice/forms/tweet.php');
 
         $webAssert = $this->getAssertSession();
+        $webAssert->statusCodeEquals(200);
         $webAssert->elementsCount('css', 'input', 1);
     }
 
