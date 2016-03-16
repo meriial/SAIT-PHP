@@ -72,7 +72,7 @@ class FormTest extends TestCase
         $this->pressButton('Submit');
 
         $webAssert->pageTextNotContains('ERROR!');
-        $webAssert->addressEquals('/assignment/forms/main.php');
+        $this->assertAddressEquals('/assignment/forms/main.php');
     }
 
     /**
@@ -92,7 +92,7 @@ class FormTest extends TestCase
         $this->pressButton('Submit');
 
         $webAssert->pageTextNotContains('ERROR!');
-        $webAssert->addressEquals('/assignment/forms/login.php');
+        $this->assertAddressEquals('/assignment/forms/login.php');
 
     }
 
@@ -111,7 +111,7 @@ class FormTest extends TestCase
         $this->pressButton('Submit');
 
         $webAssert->pageTextNotContains('ERROR!');
-        $webAssert->addressEquals('/assignment/forms/main.php');
+        $this->assertAddressEquals('/assignment/forms/main.php');
         $webAssert->pageTextContains($name);
 
         $this->reload();

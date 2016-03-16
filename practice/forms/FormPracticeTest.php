@@ -37,7 +37,7 @@ class FormPracticeTest extends TestCase {
         $this->pressButton('Submit');
 
         $webAssert->pageTextNotContains('ERROR!');
-        $webAssert->addressEquals(HTTP_ROOT.'/practice/forms/tweet.php');
+        $this->assertAddressEquals('/practice/forms/tweet.php');
     }
 
 

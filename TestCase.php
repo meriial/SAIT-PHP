@@ -90,4 +90,10 @@ class TestCase extends BrowserTestCase {
         $this->assertEquals($expected, $actual, $message);
     }
 
+    public function assertAddressEquals($address)
+    {
+        $this->getAssertSession()
+             ->addressEquals(HTTP_ROOT.$address);
+    }
+
 }
