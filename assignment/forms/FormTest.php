@@ -78,7 +78,7 @@ class FormTest extends TestCase
     /**
      * @test
      */
-    public function successful_registration_redirects_to_main_page()
+    public function successful_registration_redirects_to_login()
     {
 
         $webAssert = $this->getAssertSession();
@@ -87,7 +87,7 @@ class FormTest extends TestCase
         $webAssert->pageTextNotContains('SUCCESS!');
 
         $this->fillField('name', 'bob');
-        $this->fillField('email', 'bob');
+        $this->fillField('email', 'correct@email.com');
         $this->fillField('password', 'pass');
         $this->pressButton('Submit');
 
