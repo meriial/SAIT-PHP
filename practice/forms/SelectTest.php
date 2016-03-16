@@ -14,6 +14,7 @@ class SelectTest extends TestCase {
      */
     public function it_should_return_a_select_element_with_options()
     {
+        $this->assertFunctionExists('generateSelect');
 
         $arrayOfOptions = [
             'AB' => 'Alberta',
@@ -31,7 +32,7 @@ class SelectTest extends TestCase {
 </select>
 OPTIONS;
 
-        $this->assertEquals($expected, $actual);
+        $this->assertFilteredEquals($expected, $actual);
     }
 
     /**
@@ -39,6 +40,7 @@ OPTIONS;
      */
     public function it_should_return_a_group_of_radio_buttons()
     {
+        $this->assertFunctionExists('generateRadioGroup');
 
         $arrayOfOptions = [
             'AB' => 'Alberta',
@@ -54,7 +56,7 @@ OPTIONS;
 <input type="radio" value="MB" name="province" /><label>Manitoba</label>
 OPTIONS;
 
-        $this->assertEquals($expected, $actual);
+        $this->assertFilteredEquals($expected, $actual);
     }
 
 }

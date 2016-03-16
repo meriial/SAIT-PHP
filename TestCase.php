@@ -82,4 +82,12 @@ class TestCase extends BrowserTestCase {
         $this->assertTrue(function_exists($functionName), "There is no function $functionName. You need to write it.");
     }
 
+    public function assertFilteredEquals($expected, $actual, $message = false)
+    {
+        $expected = str_replace(['\r'], '', $expected);
+        $actual = str_replace(['\r'], '', $actual);
+
+        $this->assertEquals($expected, $actual, $message);
+    }
+
 }

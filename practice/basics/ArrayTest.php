@@ -15,7 +15,10 @@ class ArrayTest extends TestCase {
      */
     public function it_should_multiply_the_input()
     {
-        $actual = arrayDoubler([1,2,3,4], 1);
+        $inputArray = [1,2,3,4];
+        $inputMultiplier = 1;
+
+        $actual = arrayDoubler($inputArray, $inputMultiplier);
 
         $expected = [
             1, 2, 3, 4
@@ -29,7 +32,10 @@ class ArrayTest extends TestCase {
      */
     public function it_should_multiply_the_input_2()
     {
-        $actual = arrayDoubler([1,2,3,4], 2);
+        $inputArray = [1,2,3,4];
+        $inputMultiplier = 2;
+
+        $actual = arrayDoubler($inputArray, $inputMultiplier);
 
         $expected = [
             2, 4, 6, 8
@@ -50,6 +56,8 @@ class ArrayTest extends TestCase {
      */
     public function it_should_handle_associative_arrays()
     {
+        $this->assertFunctionExists('listAddresses');
+
         $input = [
             'Bob' => '123 Main Street',
             'Jane' => '16 Philpot Avenue'
@@ -65,6 +73,8 @@ class ArrayTest extends TestCase {
         $this->assertEquals($expected, $actual);
 
 
+        // the following test is more complex that the previous one
+        // but it does the same thing.
         $input = [];
         $expected = [];
         $count = 10;
