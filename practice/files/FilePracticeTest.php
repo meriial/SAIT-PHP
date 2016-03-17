@@ -13,7 +13,7 @@ class LogTest extends TestCase
         $this->assertFunctionExists('write_tweet');
 
         $tweet = $this->faker->text;
-        write_tweet($text);
+        write_tweet($tweet);
 
         $tweets = file_get_contents(PRACTICE_ROOT.'/files/tweets.txt');
 
