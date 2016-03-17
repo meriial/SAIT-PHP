@@ -38,9 +38,9 @@ class LogTest extends TestCase
 
         $tds = $this->getSession()->getPage()->findAll('css', 'td');
 
-        $this->assertRegExp("/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d $word1/", $tds[0]->getText(), 'The log entry did not match the desired pattern.');
+        $this->assertRegExp("/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d $word1/", $tds[0]->getText(), 'The log entry did not match the desired pattern: YYYY-MM-DD Message...');
 
-        $this->assertRegExp("/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d $word2/", $tds[1]->getText(), 'The log entry did not match the desired pattern.');
+        $this->assertRegExp("/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d $word2/", $tds[1]->getText(), 'The log entry did not match the desired pattern: YYYY-MM-DD Message...');
     }
 
 }
