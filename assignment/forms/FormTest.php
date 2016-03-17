@@ -45,8 +45,8 @@ class FormTest extends TestCase
         $this->fillField('password', $password);
         $this->pressButton('Submit');
 
-        $this->assertEquals('correct@email.com', $this->findField('email')->getValue());
-        $this->assertEquals($password, $this->findField('password')->getValue());
+        $this->assertEquals('correct@email.com', $this->findField('email')->getValue(), 'You must re-populate the email field when validation fails.');
+        $this->assertEquals($password, $this->findField('password')->getValue(),'You must re-populate the password field when validation fails.');
 
         $webAssert->pageTextContains('ERROR! Incorrect password.');
         $webAssert->pageTextNotContains('ERROR! Incorrect email.');
@@ -60,8 +60,8 @@ class FormTest extends TestCase
         $this->fillField('password', 'correct-password');
         $this->pressButton('Submit');
 
-        $this->assertEquals($email, $this->findField('email')->getValue());
-        $this->assertEquals('correct-password', $this->findField('password')->getValue());
+        $this->assertEquals($email, $this->findField('email')->getValue(), 'You must re-populate the email field when validation fails.');
+        $this->assertEquals('correct-password', $this->findField('password')->getValue(), 'You must re-populate the password field when validation fails.');
         $webAssert->pageTextContains('ERROR! Incorrect email.');
         $webAssert->pageTextNotContains('ERROR! Incorrect password.');
 
