@@ -31,8 +31,8 @@ class FormTest extends TestCase
     public function login_should_validate_input()
     {
         // the expected correct login should be
-        // u: bob
-        // p: pass
+        // u: correct@email.com
+        // p: correct-password
 
         // wrong password
         $webAssert = $this->getAssertSession();
