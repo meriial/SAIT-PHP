@@ -78,8 +78,9 @@ class TestCase extends BrowserTestCase {
 
     public function assertNoPhpErrors()
     {
-        $this->assertPageNotContains('*** Notice:', 'There was a PHP error on the page. You must ensure there are no errors.');
-        $this->assertPageNotContains('*** Parse error:', 'There was a PHP error on the page. You must ensure there are no errors.');
+        $this->assertPageNotContains('Notice:', '*** There was a PHP error on the page. You must ensure there are no errors. ***');
+        $this->assertPageNotContains('Parse error:', '*** There was a PHP error on the page. You must ensure there are no errors. ***');
+        $this->assertPageNotContains('Fatal error:', '*** There was a PHP error on the page. You must ensure there are no errors. ***');
     }
 
     public function assertPageContains($text, $message = false)
