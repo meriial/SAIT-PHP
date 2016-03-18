@@ -83,6 +83,14 @@ class TestCase extends BrowserTestCase {
         $this->assertPageNotContains('Fatal error:', '*** There was a PHP error on the page. You must ensure there are no errors. ***');
     }
 
+    public function printPage()
+    {
+        echo "\n-------\n";
+        echo "-----> ".$this->getSession()->getCurrentUrl()."\n";
+        echo $this->getSession()->getPage()->getHtml()."\n";
+        echo "-------\n";
+    }
+
     public function assertPageContains($text, $message = false)
     {
         $this->assertTrue($this->getSession()->getPage()->hasContent($text), $message);

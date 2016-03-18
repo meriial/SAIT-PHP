@@ -40,6 +40,7 @@ class FormTest extends TestCase
         $password = $this->faker->password;
 
         $this->visit('assignment/forms/login.php');
+        $this->printPage();
 
         $this->fillField('email', 'correct@email.com');
         $this->fillField('password', $password);
