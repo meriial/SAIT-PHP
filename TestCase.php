@@ -33,6 +33,21 @@ class TestCase extends BrowserTestCase {
     {
         $this->getSession()->visit(HTTP_ROOT.'/'.$url);
         $this->assertNoPhpErrors();
+        $this->statusCodeEquals(200, 'Could not find page "'.HTTP_ROOT.'/'.$url.'"');
+    }
+
+    public function statusCodeEquals($code, $message)
+    {
+        $actual = $this->getSession()->getStatusCode();
+        $message = sprintf($message.'. Current response status code is %d, but %d expected.', $actual, $code);
+
+        $this->assertTrue(intval($code) === intval($actual), $message);
+    }
+
+    public function getCurrentUrlPath()
+    {
+        $webAssert = $this->getAssertSession();
+        return $webAssert->getCurrentUrlPath();
     }
 
     public function reload()
@@ -63,8 +78,8 @@ class TestCase extends BrowserTestCase {
 
     public function assertNoPhpErrors()
     {
-        $this->assertPageNotContains('Notice:', 'There was a PHP error on the page.');
-        $this->assertPageNotContains('Parse error:', 'There was a PHP error on the page.');
+        $this->assertPageNotContains('*** Notice:', 'There was a PHP error on the page. You must ensure there are no errors.');
+        $this->assertPageNotContains('*** Parse error:', 'There was a PHP error on the page. You must ensure there are no errors.');
     }
 
     public function assertPageContains($text, $message = false)
