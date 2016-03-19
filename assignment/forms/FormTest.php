@@ -37,8 +37,7 @@ class FormTest extends TestCase
         // wrong password
         $webAssert = $this->getAssertSession();
         $email = $this->faker->email;
-        $password = $this->faker->password;
-
+        $password = $this->faker->regexify('[a-zA-Z0-9._%+-]{5,12}');
         $this->visit('assignment/forms/login.php');
 
         $this->fillField('email', 'correct@email.com');
