@@ -85,8 +85,7 @@ class TestCase extends BrowserTestCase {
 
     public function printPage()
     {
-        echo "\n-------\n";
-        echo "-----> ".$this->getSession()->getCurrentUrl()."\n";
+        echo "\n-------> ".$this->getSession()->getCurrentUrl()."\n";
         echo $this->getSession()->getPage()->getHtml()."\n";
         echo "-------\n";
     }
