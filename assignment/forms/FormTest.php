@@ -9,9 +9,7 @@ class FormTest extends TestCase
     public function registration_should_have_3_inputs()
     {
         $this->visit('assignment/forms/registration.php');
-
-        $webAssert = $this->getAssertSession();
-        $webAssert->elementsCount('css', 'input', 3);
+        $this->assertElementCount('input', 3, 'The registration page should have exactly 3 inputs. Remember to use <button>Submit</button> for submit instead of <input type="submit" />');
     }
 
     /**
@@ -21,8 +19,7 @@ class FormTest extends TestCase
     {
         $this->visit('assignment/forms/login.php');
 
-        $webAssert = $this->getAssertSession();
-        $webAssert->elementsCount('css', 'input', 2);
+        $this->assertElementCount('input', 2, 'The login page should have exactly 2 inputs. Remember to use <button>Submit</button> for submit instead of <input type="submit" />');
     }
 
     /**

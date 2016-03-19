@@ -2,6 +2,7 @@
 
 use aik099\PHPUnit\BrowserTestCase;
 use Behat\Mink\WebAssert;
+use Behat\Mink\Exception\ExpectationException;
 
 class TestCase extends BrowserTestCase {
 
@@ -62,7 +63,13 @@ class TestCase extends BrowserTestCase {
 
     public function fillField($field, $value)
     {
-        $this->getSession()->getPage()->fillField($field, $value);
+        try {
+            $this->getSession()->getPage()->fillField($field, $value);
+        } catch (Exception $e) {
+            $message = "\n" . $e;
+            throw new Exception($message);
+        }
+
     }
 
     public function findField($field)
@@ -117,6 +124,18 @@ class TestCase extends BrowserTestCase {
     {
         $this->getAssertSession()
              ->addressEquals(HTTP_ROOT.$address);
+    }
+
+    public function assertElementCount($selector, $count, $message = false)
+    {
+        $webAssert = $this->getAssertSession();
+
+        try {
+            $webAssert->elementsCount('css', $selector, $count);
+        } catch (ExpectationException $e) {
+            $message .= "\n" . $e;
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
     }
 
 }
