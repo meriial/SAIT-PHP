@@ -30,14 +30,20 @@ class TestCase extends BrowserTestCase {
         }
     }
 
-    public function visit($url)
+    public function visit($url, $expect200 = true)
     {
         $this->getSession()->visit(HTTP_ROOT.'/'.$url);
         $this->assertNoPhpErrors();
-        $this->statusCodeEquals(200, 'Could not find page "'.HTTP_ROOT.'/'.$url.'"');
+
+        if ($expect200) {
+            $this->assertStatusCode(
+                200,
+                'Could not find page "'.HTTP_ROOT.'/'.$url.'"'
+            );
+        }
     }
 
-    public function statusCodeEquals($code, $message)
+    public function assertStatusCode($code, $message)
     {
         $actual = $this->getSession()->getStatusCode();
         $message = sprintf($message.'. Current response status code is %d, but %d expected.', $actual, $code);
@@ -85,9 +91,20 @@ class TestCase extends BrowserTestCase {
 
     public function assertNoPhpErrors()
     {
-        $this->assertPageNotContains('Notice:', '*** There was a PHP error on the page. You must ensure there are no errors. ***');
-        $this->assertPageNotContains('Parse error:', '*** There was a PHP error on the page. You must ensure there are no errors. ***');
-        $this->assertPageNotContains('Fatal error:', '*** There was a PHP error on the page. You must ensure there are no errors. ***');
+        try {
+            $this->assertPageNotContains('Notice:');
+            $this->assertPageNotContains('Parse error:');
+            $this->assertPageNotContains('Fatal error:');
+        } catch (Exception $e) {
+            $page = $this->getSession()->getPage()->getText();
+            preg_match('/(Notice:|Parse error:|Fatal error:).*on line \d+/', $page, $matches);
+            throw new ExpectationException(
+                "\n*** ".$this->getSession()->getCurrentUrl()." ***\n".
+                '*** There was a PHP error on the page. You must ensure there are no errors. ***'."\n*** $matches[0] ***\n",
+                $this->getSession()->getDriver()
+            );
+        }
+
     }
 
     public function printPage()
@@ -97,14 +114,40 @@ class TestCase extends BrowserTestCase {
         echo "-------\n";
     }
 
+    public function throwExceptionWithPageDump($message)
+    {
+        $e = new ExpectationException(
+            '',
+            $this->getSession()->getDriver()
+        );
+
+        $message .= $e;
+
+        throw new ExpectationException(
+            $message,
+            $this->getSession()->getDriver()
+        );
+    }
+
     public function assertPageContains($text, $message = false)
     {
-        $this->assertTrue($this->getSession()->getPage()->hasContent($text), $message);
+        if( !$this->getSession()->getPage()->hasContent($text) ) {
+            $defaultMessage = 'Failed asserting that page contained text: '.$text;
+            if( $message ) {
+                $message .= $defaultMessage;
+            } else {
+                $message = $defaultMessage;
+            }
+
+            $this->throwExceptionWithPageDump($message);
+        }
     }
 
     public function assertPageNotContains($text, $message = false)
     {
-        $this->assertFalse($this->getSession()->getPage()->hasContent($text), $message);
+        if( $this->getSession()->getPage()->hasContent($text) ) {
+            $this->throwExceptionWithPageDump($message);
+        }
     }
 
     public function assertFunctionExists($functionName)
@@ -120,10 +163,20 @@ class TestCase extends BrowserTestCase {
         $this->assertEquals($expected, $actual, $message);
     }
 
-    public function assertAddressEquals($address)
+    public function assertAddressEquals($address, $message = false)
     {
-        $this->getAssertSession()
-             ->addressEquals(HTTP_ROOT.$address);
+        try {
+            $this->getAssertSession()
+                 ->addressEquals(HTTP_ROOT.$address);
+        } catch (Exception $e) {
+            if($message) {
+                $message .= "\n" . $e->getMessage();
+            } else {
+                $message = $e->getMessage();
+            }
+            $this->throwExceptionWithPageDump($message);
+        }
+
     }
 
     public function assertElementCount($selector, $count, $message = false)
@@ -133,9 +186,19 @@ class TestCase extends BrowserTestCase {
         try {
             $webAssert->elementsCount('css', $selector, $count);
         } catch (ExpectationException $e) {
-            $message .= "\n" . $e;
-            throw new ExpectationException($message, $this->getSession()->getDriver());
+            $this->throwExceptionWithPageDump($message);
         }
     }
 
+    /**
+     * Prepends every line in a string with pipe (|).
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    protected function pipeString($string)
+    {
+        return '|  '.strtr($string, array("\n" => "\n|  "));
+    }
 }

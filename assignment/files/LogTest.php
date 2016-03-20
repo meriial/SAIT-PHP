@@ -28,6 +28,8 @@ class LogTest extends TestCase
      */
     public function it_should_display_the_log_in_a_table()
     {
+        $this->requireOnce(ASSIGNMENT_ROOT.'/files/functions.php');
+        
         clear_log();
         $word1 = $this->faker->word;
         $word2 = $this->faker->word;
