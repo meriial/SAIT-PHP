@@ -8,7 +8,7 @@ class FinalTest extends TestCase
 
         $this->visit('assignment2/final/logout.php', false);
         $this->resetDatabase();
-        
+
         $this->user     = $this->faker->name;
         $this->email    = $this->faker->email;
         $this->password = $this->faker->regexify('[a-zA-Z0-9._%+-]{5,12}');
@@ -144,7 +144,7 @@ class FinalTest extends TestCase
 
     public function resetDatabase()
     {
-        $this->visit('assignment2/final/reset.php', false);
+        $this->visit('assignment2/final/reset.php');
     }
 
 }

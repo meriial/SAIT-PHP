@@ -14,7 +14,7 @@ class DatabaseTest extends TestCase
 
         $this->name     = $this->faker->name;
         $this->email    = $this->faker->email;
-        $this->password = $this->faker->regexify('[a-zA-Z0-9._%+-]{5,12}');
+        $this->password = $this->faker->regexify('[a-zA-Z0-9_-]{5,12}');
     }
 
     /**
@@ -75,6 +75,20 @@ class DatabaseTest extends TestCase
 
         $items = getItems();
         $this->assertCount(1, $items);
+    }
+
+    /**
+    * @test
+    */
+    public function it_should_store_and_retrieve_users_escaping_input()
+    {
+        $this->assertFunctionExists('storeUser');
+        $this->assertFunctionExists('getUsers');
+
+        storeUser('bad.\'name.', 'stop\'.now.', 'noat\'h.nteoh.');
+
+        $users = getUsers();
+        $this->assertCount(1, $users, 'There should be exactly one user.');
     }
 
 }
