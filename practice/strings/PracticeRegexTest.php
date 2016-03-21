@@ -70,7 +70,7 @@ class RegexTest extends TestCase
         );
 
         $this->assertTrue(
-            onlyNumbers('bob'),
+            onlyLowercase('bob'),
             'Should match lowercase letters. "bob" should match.'
         );
     }
