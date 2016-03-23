@@ -11,7 +11,7 @@ class FinalTest extends TestCase
 
         $this->user     = $this->faker->name;
         $this->email    = $this->faker->email;
-        $this->password = $this->faker->regexify('[a-zA-Z0-9._%+-]{5,12}');
+        $this->password = '1234abCD!!';
     }
 
     public function tearDown()
