@@ -71,7 +71,7 @@ class DatabaseTest extends TestCase
         $items = getItems();
         $this->assertCount(0, $items);
 
-        storeItem('ahha');
+        storeItem('ahha', 1);
 
         $items = getItems();
         $this->assertCount(1, $items);

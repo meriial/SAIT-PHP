@@ -118,20 +118,54 @@ class FinalTest extends TestCase
         $this->assertPageContains('hohoho');
     }
 
-    public function registerUser()
+    /**
+     * @test
+     */
+    public function it_should_only_display_the_logged_in_users_content()
     {
+        $this->registerUser('user1@example.com', '1234');
+        $this->registerUser('user2@example.com', '1234');
+        $this->loginUser('user1@example.com', '1234');
+
+        $this->enterContent('user 1 content');
+
+        $this->visit('assignment2/final/main.php');
+        $this->assertPageContains('user 1 content');
+
+        $this->visit('assignment2/final/logout.php');
+        $this->loginUser('user2@example.com', '1234');
+
+        $this->visit('assignment2/final/main.php');
+        $this->enterContent('user 2 content');
+        $this->assertPageContains('user 2 content');
+        $this->assertPageNotContains('user 1 content');
+
+        $this->visit('assignment2/final/logout.php');
+        $this->loginUser('user1@example.com', '1234');
+        $this->assertPageContains('user 1 content');
+        $this->assertPageNotContains('user 2 content');
+    }
+
+    public function registerUser($email = false, $password = false)
+    {
+        $email = $email ?: $this->email;
+        $password = $password ?: $this->password;
+
         $this->visit('assignment2/final/registration.php');
-        $this->fillField('name', $this->user);
-        $this->fillField('email', $this->email);
-        $this->fillField('password', $this->password);
+        $this->fillField('name', $this->faker->name);
+        $this->fillField('email', $email);
+        $this->fillField('password', $password);
         $this->pressButton('Submit');
     }
 
-    public function loginUser()
+    public function loginUser($email = false, $password = false)
     {
+        $email = $email ?: $this->email;
+        $password = $password ?: $this->password;
+
         $this->visit('assignment2/final/login.php');
-        $this->fillField('email', $this->email);
-        $this->fillField('password', $this->password);
+        $this->fillField('email', $email);
+        $this->fillField('password', $password);
         $this->pressButton('Submit');
     }
 
