@@ -123,9 +123,9 @@ class FinalTest extends TestCase
      */
     public function it_should_only_display_the_logged_in_users_content()
     {
-        $this->registerUser('user1@example.com', '1234');
-        $this->registerUser('user2@example.com', '1234');
-        $this->loginUser('user1@example.com', '1234');
+        $this->registerUser('user1@example.com', '1234abCD!!');
+        $this->registerUser('user2@example.com', '1234abCD!!');
+        $this->loginUser('user1@example.com', '1234abCD!!');
 
         $this->enterContent('user 1 content');
 
@@ -133,7 +133,7 @@ class FinalTest extends TestCase
         $this->assertPageContains('user 1 content');
 
         $this->visit('assignment2/final/logout.php');
-        $this->loginUser('user2@example.com', '1234');
+        $this->loginUser('user2@example.com', '1234abCD!!');
 
         $this->visit('assignment2/final/main.php');
         $this->enterContent('user 2 content');
@@ -141,7 +141,7 @@ class FinalTest extends TestCase
         $this->assertPageNotContains('user 1 content');
 
         $this->visit('assignment2/final/logout.php');
-        $this->loginUser('user1@example.com', '1234');
+        $this->loginUser('user1@example.com', '1234abCD!!');
         $this->assertPageContains('user 1 content');
         $this->assertPageNotContains('user 2 content');
     }
