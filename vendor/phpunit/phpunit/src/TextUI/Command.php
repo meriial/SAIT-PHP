@@ -21,6 +21,7 @@ class PHPUnit_TextUI_Command
      */
     protected $arguments = [
         'listGroups'              => false,
+        'listSuites'              => false,
         'loader'                  => null,
         'useDefaultConfiguration' => true
     ];
@@ -52,10 +53,12 @@ class PHPUnit_TextUI_Command
         'enforce-time-limit'      => null,
         'exclude-group='          => null,
         'filter='                 => null,
+        'generate-configuration'  => null,
         'group='                  => null,
         'help'                    => null,
         'include-path='           => null,
         'list-groups'             => null,
+        'list-suites'             => null,
         'loader='                 => null,
         'log-json='               => null,
         'log-junit='              => null,
@@ -85,8 +88,11 @@ class PHPUnit_TextUI_Command
         'tap'                     => null,
         'teamcity'                => null,
         'testdox'                 => null,
+        'testdox-group='          => null,
+        'testdox-exclude-group='  => null,
         'testdox-html='           => null,
         'testdox-text='           => null,
+        'testdox-xml='            => null,
         'test-suffix='            => null,
         'testsuite='              => null,
         'verbose'                 => null,
@@ -151,6 +157,27 @@ class PHPUnit_TextUI_Command
             }
         }
 
+        if ($this->arguments['listSuites']) {
+            $this->printVersionString();
+
+            print "Available test suite(s):\n";
+
+            $configuration = PHPUnit_Util_Configuration::getInstance(
+                $this->arguments['configuration']
+            );
+
+            $suiteNames = $configuration->getTestSuiteNames();
+            foreach ($suiteNames as $suiteName) {
+                print " - $suiteName\n";
+            }
+
+            if ($exit) {
+                exit(PHPUnit_TextUI_TestRunner::SUCCESS_EXIT);
+            } else {
+                return PHPUnit_TextUI_TestRunner::SUCCESS_EXIT;
+            }
+        }
+
         unset($this->arguments['test']);
         unset($this->arguments['testFile']);
 
@@ -176,7 +203,7 @@ class PHPUnit_TextUI_Command
      *
      * @return PHPUnit_TextUI_TestRunner
      *
-     * @since  Method available since Release 3.6.0
+     * @since Method available since Release 3.6.0
      */
     protected function createRunner()
     {
@@ -331,6 +358,55 @@ class PHPUnit_TextUI_Command
                     $this->arguments['testsuite'] = $option[1];
                     break;
 
+                case '--generate-configuration':
+                    $this->printVersionString();
+
+                    printf(
+                        "Generating phpunit.xml in %s\n\n",
+                        getcwd()
+                    );
+
+                    print 'Bootstrap script (relative to path shown above; default: vendor/autoload.php): ';
+                    $bootstrapScript = trim(fgets(STDIN));
+
+                    print 'Tests directory (relative to path shown above; default: tests): ';
+                    $testsDirectory = trim(fgets(STDIN));
+
+                    print 'Source directory (relative to path shown above; default: src): ';
+                    $src = trim(fgets(STDIN));
+
+                    if ($bootstrapScript == '') {
+                        $bootstrapScript = 'vendor/autoload.php';
+                    }
+
+                    if ($testsDirectory == '') {
+                        $testsDirectory = 'tests';
+                    }
+
+                    if ($src == '') {
+                        $src = 'src';
+                    }
+
+                    $generator = new PHPUnit_Util_ConfigurationGenerator;
+
+                    file_put_contents(
+                        'phpunit.xml',
+                        $generator->generateDefaultConfiguration(
+                            PHPUnit_Runner_Version::series(),
+                            $bootstrapScript,
+                            $testsDirectory,
+                            $src
+                        )
+                    );
+
+                    printf(
+                        "\nGenerated phpunit.xml in %s\n",
+                        getcwd()
+                    );
+
+                    exit(PHPUnit_TextUI_TestRunner::SUCCESS_EXIT);
+                    break;
+
                 case '--group':
                     $this->arguments['groups'] = explode(',', $option[1]);
                     break;
@@ -355,6 +431,10 @@ class PHPUnit_TextUI_Command
 
                 case '--list-groups':
                     $this->arguments['listGroups'] = true;
+                    break;
+
+                case '--list-suites':
+                    $this->arguments['listSuites'] = true;
                     break;
 
                 case '--printer':
@@ -437,12 +517,30 @@ class PHPUnit_TextUI_Command
                     $this->arguments['printer'] = 'PHPUnit_Util_TestDox_ResultPrinter_Text';
                     break;
 
+                case '--testdox-group':
+                    $this->arguments['testdoxGroups'] = explode(
+                        ',',
+                        $option[1]
+                    );
+                    break;
+
+                case '--testdox-exclude-group':
+                    $this->arguments['testdoxExcludeGroups'] = explode(
+                        ',',
+                        $option[1]
+                    );
+                    break;
+
                 case '--testdox-html':
                     $this->arguments['testdoxHTMLFile'] = $option[1];
                     break;
 
                 case '--testdox-text':
                     $this->arguments['testdoxTextFile'] = $option[1];
+                    break;
+
+                case '--testdox-xml':
+                    $this->arguments['testdoxXMLFile'] = $option[1];
                     break;
 
                 case '--no-configuration':
@@ -943,6 +1041,7 @@ Logging Options:
   --log-json <file>         Log test execution in JSON format.
   --testdox-html <file>     Write agile documentation in HTML format to file.
   --testdox-text <file>     Write agile documentation in Text format to file.
+  --testdox-xml <file>      Write agile documentation in XML format to file.
   --reverse-list            Print defects in reverse order
 
 Test Selection Options:
@@ -952,6 +1051,7 @@ Test Selection Options:
   --group ...               Only runs tests from the specified group(s).
   --exclude-group ...       Exclude tests from the specified group(s).
   --list-groups             List available test groups.
+  --list-suites             List available test suites.
   --test-suffix ...         Only search for test in files with specified
                             suffix(es). Default: Test.php,.phpt
 
@@ -989,6 +1089,8 @@ Test Execution Options:
   --tap                     Report test execution progress in TAP format.
   --teamcity                Report test execution progress in TeamCity format.
   --testdox                 Report test execution progress in TestDox format.
+  --testdox-group           Only include tests from the specified group(s).
+  --testdox-exclude-group   Exclude tests from the specified group(s).
   --printer <printer>       TestListener implementation to use.
 
 Configuration Options:
@@ -999,6 +1101,7 @@ Configuration Options:
   --no-coverage             Ignore code coverage configuration.
   --include-path <path(s)>  Prepend PHP's include_path with given path(s).
   -d key[=value]            Sets a php.ini value.
+  --generate-configuration  Generate configuration file with suggested settings.
 
 Miscellaneous Options:
 
