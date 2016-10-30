@@ -1,0 +1,15 @@
+default:
+  autoload:
+    - %paths.base%/src/Contexts
+  extensions:
+    Behat\MinkExtension:
+      base_url: http://localhost
+      sessions: 
+        default:
+          goutte: ~
+  suites:
+    default:
+      filters:
+        # tags: "~@assignment1&&~@assignment2&&~@start"
+      paths:
+        - %paths.base%/features
