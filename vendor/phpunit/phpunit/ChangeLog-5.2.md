@@ -2,6 +2,20 @@
 
 All notable changes of the PHPUnit 5.2 release series are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## [5.2.12] - 2016-03-15
+
+### Fixed
+
+* Fixed [#2112](https://github.com/sebastianbergmann/phpunit/issues/2112): Output is html entity encoded when ran through `phpdbg`
+* Fixed [#2118](https://github.com/sebastianbergmann/phpunit/issues/2118): Prophecy integration does not work on PHP 7
+
+## [5.2.11] - 2016-03-14
+
+### Fixed
+
+* Fixed [#2094](https://github.com/sebastianbergmann/phpunit/issues/2094): Missing argument for `PHPUnit_TextUI_TestRunner::run()`
+* Fixed [#2109](https://github.com/sebastianbergmann/phpunit/issues/2109): Process isolation leaks global variable
+
 ## [5.2.10] - 2016-03-03
 
 ### Fixed
@@ -87,6 +101,8 @@ All notable changes of the PHPUnit 5.2 release series are documented in this fil
 
 * The `mapTestClassNameToCoveredClassName` configuration setting has been removed
 
+[5.2.12]: https://github.com/sebastianbergmann/phpunit/compare/5.2.11...5.2.12
+[5.2.11]: https://github.com/sebastianbergmann/phpunit/compare/5.2.10...5.2.11
 [5.2.10]: https://github.com/sebastianbergmann/phpunit/compare/5.2.9...5.2.10
 [5.2.9]: https://github.com/sebastianbergmann/phpunit/compare/5.2.8...5.2.9
 [5.2.8]: https://github.com/sebastianbergmann/phpunit/compare/5.2.7...5.2.8

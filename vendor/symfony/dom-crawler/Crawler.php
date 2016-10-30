@@ -58,8 +58,6 @@ class Crawler implements \Countable, \IteratorAggregate
     private $isHtml = true;
 
     /**
-     * Constructor.
-     *
      * @param mixed  $node       A Node to use as the base for the crawling
      * @param string $currentUri The current URI
      * @param string $baseHref   The base href value
@@ -70,6 +68,26 @@ class Crawler implements \Countable, \IteratorAggregate
         $this->baseHref = $baseHref ?: $currentUri;
 
         $this->add($node);
+    }
+
+    /**
+     * Returns the current URI.
+     *
+     * @return string
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    /**
+     * Returns base href.
+     *
+     * @return string
+     */
+    public function getBaseHref()
+    {
+        return $this->baseHref;
     }
 
     /**
@@ -220,8 +238,11 @@ class Crawler implements \Countable, \IteratorAggregate
      *
      * @param string $content The XML content
      * @param string $charset The charset
+     * @param int    $options Bitwise OR of the libxml option constants
+     *                        LIBXML_PARSEHUGE is dangerous, see
+     *                        http://symfony.com/blog/security-release-symfony-2-0-17-released
      */
-    public function addXmlContent($content, $charset = 'UTF-8')
+    public function addXmlContent($content, $charset = 'UTF-8', $options = LIBXML_NONET)
     {
         // remove the default namespace if it's the only namespace to make XPath expressions simpler
         if (!preg_match('/xmlns:/', $content)) {
@@ -235,7 +256,7 @@ class Crawler implements \Countable, \IteratorAggregate
         $dom->validateOnParse = true;
 
         if ('' !== trim($content)) {
-            @$dom->loadXML($content, LIBXML_NONET | (defined('LIBXML_PARSEHUGE') ? LIBXML_PARSEHUGE : 0));
+            @$dom->loadXML($content, $options);
         }
 
         libxml_use_internal_errors($internalErrors);
@@ -316,7 +337,7 @@ class Crawler implements \Countable, \IteratorAggregate
      *
      * @param int $position The position
      *
-     * @return Crawler A new instance of the Crawler with the selected node, or an empty Crawler if it does not exist.
+     * @return Crawler A new instance of the Crawler with the selected node, or an empty Crawler if it does not exist
      */
     public function eq($position)
     {
@@ -373,7 +394,7 @@ class Crawler implements \Countable, \IteratorAggregate
      *
      * @param \Closure $closure An anonymous function
      *
-     * @return Crawler A Crawler instance with the selected nodes.
+     * @return Crawler A Crawler instance with the selected nodes
      */
     public function reduce(\Closure $closure)
     {
@@ -472,7 +493,7 @@ class Crawler implements \Countable, \IteratorAggregate
         $nodes = array();
 
         while ($node = $node->parentNode) {
-            if (1 === $node->nodeType) {
+            if (XML_ELEMENT_NODE === $node->nodeType) {
                 $nodes[] = $node;
             }
         }
@@ -669,6 +690,20 @@ class Crawler implements \Countable, \IteratorAggregate
     }
 
     /**
+     * Selects images by alt value.
+     *
+     * @param string $value The image alt
+     *
+     * @return Crawler A new instance of Crawler with the filtered list of nodes
+     */
+    public function selectImage($value)
+    {
+        $xpath = sprintf('descendant-or-self::img[contains(normalize-space(string(@alt)), %s)]', static::xpathLiteral($value));
+
+        return $this->filterRelativeXPath($xpath);
+    }
+
+    /**
      * Selects a button by name or alt value for images.
      *
      * @param string $value The button text
@@ -728,6 +763,47 @@ class Crawler implements \Countable, \IteratorAggregate
         }
 
         return $links;
+    }
+
+    /**
+     * Returns an Image object for the first node in the list.
+     *
+     * @return Image An Image instance
+     *
+     * @throws \InvalidArgumentException If the current node list is empty
+     */
+    public function image()
+    {
+        if (!count($this)) {
+            throw new \InvalidArgumentException('The current node list is empty.');
+        }
+
+        $node = $this->getNode(0);
+
+        if (!$node instanceof \DOMElement) {
+            throw new \InvalidArgumentException(sprintf('The selected node should be instance of DOMElement, got "%s".', get_class($node)));
+        }
+
+        return new Image($node, $this->baseHref);
+    }
+
+    /**
+     * Returns an array of Image objects for the nodes in the list.
+     *
+     * @return Image[] An array of Image instances
+     */
+    public function images()
+    {
+        $images = array();
+        foreach ($this as $node) {
+            if (!$node instanceof \DOMElement) {
+                throw new \InvalidArgumentException(sprintf('The current node list should contain only DOMElement instances, "%s" found.', get_class($node)));
+            }
+
+            $images[] = new Image($node, $this->baseHref);
+        }
+
+        return $images;
     }
 
     /**
@@ -864,29 +940,54 @@ class Crawler implements \Countable, \IteratorAggregate
     {
         $expressions = array();
 
-        $unionPattern = '/\|(?![^\[]*\])/';
         // An expression which will never match to replace expressions which cannot match in the crawler
         // We cannot simply drop
         $nonMatchingExpression = 'a[name() = "b"]';
 
-        // Split any unions into individual expressions.
-        foreach (preg_split($unionPattern, $xpath) as $expression) {
-            $expression = trim($expression);
-            $parenthesis = '';
+        $xpathLen = strlen($xpath);
+        $openedBrackets = 0;
+        $startPosition = strspn($xpath, " \t\n\r\0\x0B");
 
-            // If the union is inside some braces, we need to preserve the opening braces and apply
-            // the change only inside it.
-            if (preg_match('/^[\(\s*]+/', $expression, $matches)) {
-                $parenthesis = $matches[0];
-                $expression = substr($expression, strlen($parenthesis));
+        for ($i = $startPosition; $i <= $xpathLen; ++$i) {
+            $i += strcspn($xpath, '"\'[]|', $i);
+
+            if ($i < $xpathLen) {
+                switch ($xpath[$i]) {
+                    case '"':
+                    case "'":
+                        if (false === $i = strpos($xpath, $xpath[$i], $i + 1)) {
+                            return $xpath; // The XPath expression is invalid
+                        }
+                        continue 2;
+                    case '[':
+                        ++$openedBrackets;
+                        continue 2;
+                    case ']':
+                        --$openedBrackets;
+                        continue 2;
+                }
             }
+            if ($openedBrackets) {
+                continue;
+            }
+
+            if ($startPosition < $xpathLen && '(' === $xpath[$startPosition]) {
+                // If the union is inside some braces, we need to preserve the opening braces and apply
+                // the change only inside it.
+                $j = 1 + strspn($xpath, "( \t\n\r\0\x0B", $startPosition + 1);
+                $parenthesis = substr($xpath, $startPosition, $j);
+                $startPosition += $j;
+            } else {
+                $parenthesis = '';
+            }
+            $expression = rtrim(substr($xpath, $startPosition, $i - $startPosition));
 
             if (0 === strpos($expression, 'self::*/')) {
                 $expression = './'.substr($expression, 8);
             }
 
             // add prefix before absolute element selector
-            if (empty($expression)) {
+            if ('' === $expression) {
                 $expression = $nonMatchingExpression;
             } elseif (0 === strpos($expression, '//')) {
                 $expression = 'descendant-or-self::'.substr($expression, 2);
@@ -899,7 +1000,7 @@ class Crawler implements \Countable, \IteratorAggregate
             } elseif ('/' === $expression[0] || '.' === $expression[0] || 0 === strpos($expression, 'self::')) {
                 $expression = $nonMatchingExpression;
             } elseif (0 === strpos($expression, 'descendant::')) {
-                $expression = 'descendant-or-self::'.substr($expression, strlen('descendant::'));
+                $expression = 'descendant-or-self::'.substr($expression, 12);
             } elseif (preg_match('/^(ancestor|ancestor-or-self|attribute|following|following-sibling|namespace|parent|preceding|preceding-sibling)::/', $expression)) {
                 // the fake root has no parent, preceding or following nodes and also no attributes (even no namespace attributes)
                 $expression = $nonMatchingExpression;
@@ -907,9 +1008,16 @@ class Crawler implements \Countable, \IteratorAggregate
                 $expression = 'self::'.$expression;
             }
             $expressions[] = $parenthesis.$expression;
+
+            if ($i === $xpathLen) {
+                return implode(' | ', $expressions);
+            }
+
+            $i += strspn($xpath, " \t\n\r\0\x0B", $i + 1);
+            $startPosition = $i + 1;
         }
 
-        return implode(' | ', $expressions);
+        return $xpath; // The XPath expression is invalid
     }
 
     /**
@@ -1029,6 +1137,7 @@ class Crawler implements \Countable, \IteratorAggregate
         $crawler = new static($nodes, $this->uri, $this->baseHref);
         $crawler->isHtml = $this->isHtml;
         $crawler->document = $this->document;
+        $crawler->namespaces = $this->namespaces;
 
         return $crawler;
     }

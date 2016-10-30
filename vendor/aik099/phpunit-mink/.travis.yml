@@ -4,18 +4,20 @@ sudo: false
 
 cache:
     directories:
-        - $HOME/.composer/cache
+        - $HOME/.composer/cache/files
 
 php:
     - 5.3
     - 5.4
     - 5.5
     - 5.6
+    - 7.0
     - hhvm
 
 matrix:
     include:
         - env: BUILD_TYPE=doc # marker environment variable to make the build matrix more readable in the UI
+          php: none # unused by the python language but allows to clean the display of the matrix
           # Override the different steps of the build config
           language: python
           before_install: []
@@ -23,6 +25,8 @@ matrix:
           before_script: []
           script: sphinx-build -nW -b html -d docs/build/doctrees docs docs/build/html
           after_script: []
+    allow_failures:
+        - php: 7.0
 
 env:
     global:
@@ -33,7 +37,7 @@ env:
         - secure: HQQ1FY27tpn0Idy+NDYXdbnMjHKIOsZoE59qYfs18euS0zM559gcuMk4OQ/J2lcDFmdb6vjSFlznwH+6iVyoLuC5WAP3JGQ3UXSJ+7huRV/eDI6WepmEymjEOSWvTT+RYpmQu1lQWC2Y3zBCVbVT7sbVsqXvmuR2daBL11dpU+g=
 
 install:
-    - composer require satooshi/php-coveralls:dev-master --dev
+    - composer require satooshi/php-coveralls:^1.0 --dev
 
 before_script:
     - mkdir -p build/logs

@@ -26,6 +26,9 @@ class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
 		),
 	);
 
+	/**
+	 * @large
+	 */
 	public function testOne()
 	{
 		$session = $this->getSession();
@@ -35,12 +38,13 @@ class IsolatedSessionStrategyTest extends SauceLabsAwareTestCase
 	}
 
 	/**
+	 * @large
 	 * @depends testOne
 	 */
 	public function testTwo()
 	{
 		$session = $this->getSession();
-		$url = $session->getCurrentUrl();
+		$url = $session->isStarted() ? $session->getCurrentUrl() : '';
 
 		$this->assertNotContains('https://www.google.com', $url);
 	}
