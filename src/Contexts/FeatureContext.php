@@ -188,7 +188,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iShouldBeOn($url)
     {
-        $this->assertPageAddress($url);
+        $this->assertPageAddress(HTTP_ROOT.'/'.$url);
     }
 
     /**
