@@ -36,5 +36,15 @@ Scenario: Check for redirect after submit
   And I press "Submit"
   Then I should be on 'practice/afterSubmit.php'
   
+Scenario: Fancy checkboxes
+  When I visit "practice/form_challenge1.php"
+  Then I should see 1 "form" elements on the page
+  When I check "checkbox_a"
+  And I press "Submit"
+  Then I should not see "ERROR!"
+  When I check "checkbox_a"
+  And I check "checkbox_b"
+  And I press "Submit"
+  Then I should see "ERROR!"
 
   
