@@ -49,5 +49,13 @@ Scenario: Fancy checkboxes
   And I check "checkbox_b"
   And I press "Submit"
   Then I should see "ERROR!"
+  
+Scenario: Redirect with message
+  When I visit "practice/form_challenge2.php"
+  Then I should see 1 "form" elements on the page
+  When I enter "My Great Idea" into the "field_1" field
+  And I press "Submit"
+  Then I should be on 'practice/form_challenge2_redirect.php'
+  And I should see "My Great Idea"
 
   
