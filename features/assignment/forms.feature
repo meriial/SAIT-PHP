@@ -42,3 +42,11 @@ Scenario: Successful login should redirect me to the main page
   And I press "Submit"
   Then I should be on 'assignment/forms/main.php'
   And I should not see "ERROR! Incorrect password."
+  
+@assignment1
+Scenario: Completing the main page should redirect to a success page with information
+  Given I visit 'assignment/forms/main.php'
+  When I enter 'a unique message' into the 'item' field
+  And I press "Submit"
+  Then I should be on 'assignment/forms/success.php'
+  And I should see "a unique message"
