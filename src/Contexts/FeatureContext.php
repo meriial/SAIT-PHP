@@ -252,6 +252,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     public function iHaveResetMyDatabaseByVisiting($url)
     {
         $this->visit($url);
+        $this->printLastResponse();
     }
 
     /**
@@ -302,5 +303,29 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         $this->pressButton('Submit');
         
         $this->iLogInAs($email);
+    }    
+    
+    /**
+     * @When I click :arg1
+     */
+    public function iClick($link)
+    {
+        $this->clickLink($link);
+    }
+    
+    /**
+     * @Given I have properly set up my database :arg1
+     */
+    public function iHaveProperlySetUpMyDatabase($db)
+    {
+        $sql = 'SELECT * from items';
+        
+        $db = new mysqli('localhost', 'root', '', $db);
+        
+        $result = $db->query($sql);
+        
+        if (!empty($db->errors)) {
+            throw new \Exception("The DB is not set up properly.");
+        }
     }    
 }
