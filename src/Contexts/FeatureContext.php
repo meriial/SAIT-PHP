@@ -245,4 +245,62 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             
         }
     }
+
+    /**
+     * @Given I have reset my database by visiting :arg1
+     */
+    public function iHaveResetMyDatabaseByVisiting($url)
+    {
+        $this->visit($url);
+    }
+
+    /**
+     * @Given I am logged out
+     */
+    public function iAmLoggedOut()
+    {
+        $this->visit('assignment2/logout.php');
+    }
+
+    /**
+     * @Given there is a user registered as :arg1
+     */
+    public function thereIsAUserRegisteredAs($email)
+    {
+        $this->iRegisterAndLogInAs($email);
+        $this->iAmLoggedOut();
+    }
+
+    /**
+     * @When I log in as :arg1
+     */
+    public function iLogInAs($email)
+    {
+        $this->visit('assignment2/login.php');
+        $this->fillField('email', $email);
+        $this->fillField('password', '1234');
+        $this->pressButton('Submit');
+    }
+
+    /**
+     * @When I log out
+     */
+    public function iLogOut()
+    {
+        $this->visit('assignment2/logout.php');
+    }
+
+    /**
+     * @Given I register and log in as :arg1
+     */
+    public function iRegisterAndLogInAs($email)
+    {
+        $this->visit('assignment2/registration.php');
+        $this->fillField('email', $email);
+        $this->fillField('name', 'My Name');
+        $this->fillField('password', '1234');
+        $this->pressButton('Submit');
+        
+        $this->iLogInAs($email);
+    }    
 }
