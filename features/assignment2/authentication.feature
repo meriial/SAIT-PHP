@@ -42,11 +42,11 @@ Scenario: User registers and logs in
   Given I visit 'assignment2/registration.php'
   And I enter 'user1@example.com' into the 'email' field
   And I enter 'My Name' into the 'name' field
-  And I enter '1234' into the 'password' field
+  And I enter 'aA1!' into the 'password' field
   And I press "Submit"
   Then I should be on 'assignment2/login.php'
   When I enter 'user1@example.com' into the 'email' field
-  And I enter '1234' into the 'password' field
+  And I enter 'aA1!' into the 'password' field
   And I press "Submit"
   Then I should be on 'assignment2/main.php'
   And I should see "Hello, My Name"

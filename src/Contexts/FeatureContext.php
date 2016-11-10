@@ -279,7 +279,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     {
         $this->visit('assignment2/login.php');
         $this->fillField('email', $email);
-        $this->fillField('password', '1234');
+        $this->fillField('password', 'aA1!');
         $this->pressButton('Submit');
     }
 
@@ -299,7 +299,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         $this->visit('assignment2/registration.php');
         $this->fillField('email', $email);
         $this->fillField('name', 'My Name');
-        $this->fillField('password', '1234');
+        $this->fillField('password', 'aA1!');
         $this->pressButton('Submit');
         
         $this->iLogInAs($email);
