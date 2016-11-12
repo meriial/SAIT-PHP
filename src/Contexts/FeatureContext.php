@@ -179,7 +179,12 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iEnterIntoTheField($value, $fieldName)
     {
-        $this->fillField($fieldName, $value);
+        try {
+            $this->fillField($fieldName, $value);
+        } catch (\Exception $e) {
+            $this->printLastResponse();
+            throw new \Exception("Could not find a field '$fieldName' in the page. This is what I saw: \n");
+        }
     }
 
     /**
