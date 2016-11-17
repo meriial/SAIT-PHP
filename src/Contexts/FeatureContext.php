@@ -8,6 +8,8 @@ use PHPUnit_Framework_Assert as PHPUnit;
 
 class FeatureContext extends MinkContext implements Context, SnippetAcceptingContext
 {
+    public $assignment = 'assignment3';
+    
     public function __construct()
     {
         $this->iCanReadYourBootstrapFile();
@@ -193,7 +195,13 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iShouldBeOn($url)
     {
-        $this->assertPageAddress(HTTP_ROOT.'/'.$url);
+        try {
+            $this->assertPageAddress(HTTP_ROOT.'/'.$url);
+        } catch (\Exception $e) {
+            $this->printLastResponse();
+            throw $e;
+        }
+        
     }
 
     /**
@@ -265,7 +273,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iAmLoggedOut()
     {
-        $this->visit('assignment2/logout.php');
+        $this->visit($this->assignment.'/logout.php');
     }
 
     /**
@@ -282,7 +290,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iLogInAs($email)
     {
-        $this->visit('assignment2/login.php');
+        $this->visit($this->assignment.'/login.php');
         $this->fillField('email', $email);
         $this->fillField('password', 'aA1!');
         $this->pressButton('Submit');
@@ -293,7 +301,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iLogOut()
     {
-        $this->visit('assignment2/logout.php');
+        $this->visit($this->assignment.'/logout.php');
     }
 
     /**
@@ -301,7 +309,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iRegisterAndLogInAs($email)
     {
-        $this->visit('assignment2/registration.php');
+        $this->visit($this->assignment.'/registration.php');
         $this->fillField('email', $email);
         $this->fillField('name', 'My Name');
         $this->fillField('password', 'aA1!');
